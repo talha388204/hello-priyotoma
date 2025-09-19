@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>আমার বউয়ের জন্য অ্যাপ — Fixed Single File</title>
+  <meta name="description" content="আপনার বানানো অ্যাপের একটি স্থিতিশীল, বাগ-মুক্ত স্ট্যাটিক টেমপ্লেট। GitHub Pages-এ সরাসরি কাজ করবে।" />
+
+  <!-- Preconnects & Fonts (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0b1020; /* deep navy */
+      --card: #121833; /* slightly lighter */
+      --text: #e7ecff; /* off-white */
+      --muted: #a6b0d9;
+      --brand: #7c9bff; /* soft indigo */
+      --brand-2: #49e1c2; /* teal accent */
+      --danger: #ff6b6b;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 1.25rem;
+      --radius-sm: .85rem;
+      --pad: clamp(16px, 2vw, 24px);
+      --nav-h: 64px;
+      --maxw: 1100px;
+    }
+
+    /* CSS Reset (modern minimal) */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: "Hind Siliguri", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); background: radial-gradient(1200px 600px at 10% -20%, rgba(124,155,255,.25), transparent 60%), radial-gradient(1200px 600px at 90% -10%, rgba(73,225,194,.15), transparent 55%), var(--bg); }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+
+    /* Top Nav */
+    .nav-wrap { position: sticky; top: 0; z-index: 50; backdrop-filter: saturate(150%) blur(8px); background: linear-gradient(180deg, rgba(8,12,28,.85), rgba(8,12,28,.55)); border-bottom: 1px solid rgba(124,155,255,.15); height: var(--nav-h); }
+    .nav { height: 100%; max-width: var(--maxw); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--pad); }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .2px; }
+    .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: 0 0 18px rgba(124,155,255,.8); }
+    .nav a.link { padding: 8px 12px; border-radius: 999px; color: var(--muted); transition: all .2s ease; }
+    .nav a.link.active, .nav a.link:hover { color: var(--text); background: rgba(124,155,255,.15); }
+
+    .menu { display: flex; gap: 6px; align-items: center; }
+    .menu-btn { display: none; background: transparent; color: var(--text); border: 1px solid rgba(124,155,255,.25); padding: 6px 10px; border-radius: 999px; }
+
+    @media (max-width: 760px) {
+      .menu { position: fixed; inset: var(--nav-h) 0 auto 0; background: rgba(8,12,28,.92); border-bottom: 1px solid rgba(124,155,255,.15); padding: 10px var(--pad) 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; transform-origin: top center; transform: scaleY(0); opacity: 0; pointer-events: none; transition: transform .22s ease, opacity .22s ease; }
+      .menu.open { transform: scaleY(1); opacity: 1; pointer-events: auto; }
+      .menu-btn { display: inline-flex; }
+    }
+
+    /* Sections */
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: calc(var(--pad) + 14px) var(--pad); }
+    section { margin: 26px 0 60px; scroll-margin-top: calc(var(--nav-h) + 10px); }
+    .card { background: linear-gradient(180deg, rgba(18,24,51,.9), rgba(18,24,51,.75)); border: 1px solid rgba(124,155,255,.14); border-radius: var(--radius); box-shadow: var(--shadow); overflow: clip; }
+    .card-hd { display: flex; align-items: center; justify-content: space-between; padding: 18px var(--pad) 8px; }
+    .title { font-size: clamp(22px, 3.3vw, 32px); font-weight: 700; }
+    .muted { color: var(--muted); font-size: .95rem; }
+    .card-bd { padding: 12px var(--pad) 20px; }
+
+    /* Grids */
+    .grid { display: grid; gap: 16px; }
+    .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 900px) { .grid.cols-3 { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 640px) { .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; } }
+
+    .pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(124,155,255,.12); border: 1px solid rgba(124,155,255,.28); padding: 6px 10px; border-radius: 999px; font-size: .92rem; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #0a0f1f; border: none; padding: 10px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 24px rgba(124,155,255,.35); transition: transform .12s ease, filter .12s ease; }
+    .btn:hover { filter: brightness(1.08); }
+    .btn:active { transform: translateY(1px) scale(.99); }
+    .btn.outline { background: transparent; color: var(--text); border: 1px solid rgba(124,155,255,.35); box-shadow: none; }
+
+    /* Utility */
+    .center { text-align: center; }
+    .right { text-align: right; }
+    .mb-8 { margin-bottom: 8px; }
+    .mb-12 { margin-bottom: 12px; }
+    .mt-16 { margin-top: 16px; }
+    .mt-24 { margin-top: 24px; }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(12px) scale(.98); transition: opacity .45s ease, transform .45s ease; }
+    .reveal.show { opacity: 1; transform: none; }
+
+    /* Back to top */
+    .to-top { position: fixed; right: 16px; bottom: 16px; opacity: 0; pointer-events: none; }
+    .to-top.visible { opacity: 1; pointer-events: auto; }
+  </style>
+</head>
+<body>
+  <header class="nav-wrap" role="navigation" aria-label="Primary">
+    <div class="nav">
+      <div class="brand"><span class="dot" aria-hidden="true"></span> আমার বউয়ের জন্য 🫶</div>
+      <nav class="menu" id="menu">
+        <a class="link" href="#home">হোম</a>
+        <a class="link" href="#notes">নোটস</a>
+        <a class="link" href="#gallery">গ্যালারি</a>
+        <a class="link" href="#tasks">টাস্ক</a>
+        <a class="link" href="#about">অ্যাবাউট</a>
+      </nav>
+      <button class="menu-btn" id="menuBtn" aria-controls="menu" aria-expanded="false">মেনু</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ✅ HOME / HERO -->
+    <section id="home" class="card reveal">
+      <div class="card-hd">
+        <h1 class="title">হ্যালো প্রিয়তমা ❤️</h1>
+        <span class="pill" id="dateTag">আজকের তারিখ</span>
+      </div>
+      <div class="card-bd">
+        <p class="muted mb-12">এই ছোট্ট ওয়েব অ্যাপটা তোমার জন্য। এখানে নোটস, ছবি, টু-ডু—সব এক জায়গায়।</p>
+        <div class="grid cols-3">
+          <button class="btn" data-scroll="#notes">নোট দেখো</button>
+          <button class="btn outline" data-scroll="#gallery">গ্যালারি</button>
+          <button class="btn" data-scroll="#tasks">আজকের টাস্ক</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ✅ NOTES -->
+    <section id="notes" class="card reveal" aria-labelledby="notes-title">
+      <div class="card-hd">
+        <h2 id="notes-title" class="title">মিষ্টি মেসেজ/নোটস</h2>
+        <span class="muted">লোকাল স্টোরেজে সেভ হবে</span>
+      </div>
+      <div class="card-bd">
+        <form id="noteForm" class="grid cols-2" autocomplete="off">
+          <label>
+            <span class="muted">শিরোনাম</span>
+            <input required id="noteTitle" class="pill" placeholder="যেমন: Good Morning" />
+          </label>
+          <label>
+            <span class="muted">ট্যাগ (ঐচ্ছিক)</span>
+            <input id="noteTag" class="pill" placeholder="love, gift" />
+          </label>
+          <label style="grid-column: 1 / -1;">
+            <span class="muted">মেসেজ</span>
+            <textarea required id="noteBody" class="pill" rows="3" placeholder="কিছু সুন্দর কথা লিখো..." style="width:100%; resize: vertical;"></textarea>
+          </label>
+          <div class="right" style="grid-column: 1 / -1;">
+            <button class="btn" type="submit">সেভ নোট</button>
+          </div>
+        </form>
+        <div class="mt-24 grid cols-3" id="noteList" aria-live="polite" aria-busy="false"></div>
+      </div>
+    </section>
+
+    <!-- ✅ GALLERY -->
+    <section id="gallery" class="card reveal" aria-labelledby="gallery-title">
+      <div class="card-hd">
+        <h2 id="gallery-title" class="title">গ্যালারি</h2>
+        <span class="muted">ইমেজ lazy-load + modal</span>
+      </div>
+      <div class="card-bd">
+        <div class="grid cols-3" id="galleryGrid">
+          <!-- আপনার ইমেজগুলো নিচে যুক্ত করুন (GitHub Pages এ কাজ করবে) -->
+          <img loading="lazy" src="assets/img1.jpg" alt="image 1" class="thumb" />
+          <img loading="lazy" src="assets/img2.jpg" alt="image 2" class="thumb" />
+          <img loading="lazy" src="assets/img3.jpg" alt="image 3" class="thumb" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ✅ TASKS -->
+    <section id="tasks" class="card reveal" aria-labelledby="tasks-title">
+      <div class="card-hd">
+        <h2 id="tasks-title" class="title">টাস্ক লিস্ট</h2>
+        <span class="muted">স্টেট লোকাল স্টোরেজে</span>
+      </div>
+      <div class="card-bd">
+        <form id="taskForm" class="grid cols-2" autocomplete="off">
+          <label>
+            <span class="muted">নতুন টাস্ক</span>
+            <input required id="taskInput" class="pill" placeholder="যেমন: পানি খাওয়া" />
+          </label>
+          <div class="right">
+            <button class="btn" type="submit">যোগ করুন</button>
+          </div>
+        </form>
+        <ul id="taskList" class="mt-24" style="list-style:none; padding:0; margin:0; display:grid; gap:10px;"></ul>
+      </div>
+    </section>
+
+    <!-- ✅ ABOUT -->
+    <section id="about" class="card reveal" aria-labelledby="about-title">
+      <div class="card-hd">
+        <h2 id="about-title" class="title">অ্যাবাউট</h2>
+        <span class="muted">স্ট্যাটিক, অফলাইন-ফ্রেন্ডলি</span>
+      </div>
+      <div class="card-bd">
+        <p class="muted">এটা GitHub Pages-এ ব্যাকএন্ড ছাড়াই সুন্দরভাবে চলবে। সব ডেটা ব্রাউজারের LocalStorage এ থাকে।</p>
+        <div class="mt-16">
+          <a class="btn" href="#home" data-scroll="#home">টপে ফিরে যান</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal for Gallery -->
+  <dialog id="imgModal" style="border:none; border-radius: var(--radius); box-shadow: var(--shadow); width:min(92vw, 900px); background: var(--card); color: var(--text);">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:10px var(--pad) 0;">
+      <span class="muted">ছবি প্রিভিউ</span>
+      <form method="dialog">
+        <button class="btn outline">বন্ধ</button>
+      </form>
+    </div>
+    <div style="padding: 10px var(--pad) 18px;">
+      <img id="modalImg" alt="Selected" style="width:100%; border-radius: var(--radius-sm);" />
+    </div>
+  </dialog>
+
+  <!-- Back To Top -->
+  <button class="btn to-top" id="toTop" aria-label="Back to top">↑</button>
+
+  <script>
+    // Helper: safe JSON parse
+    const jget = (k, fallback) => {
+      try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fallback; } catch { return fallback; }
+    };
+    const jset = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+    // Navigation active link + mobile toggle
+    const navLinks = [...document.querySelectorAll('.menu .link')];
+    const menu = document.getElementById('menu');
+    const menuBtn = document.getElementById('menuBtn');
+    menuBtn?.addEventListener('click', () => {
+      const open = menu.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', String(open));
+    });
+
+    const setActive = () => {
+      const y = window.scrollY + 90; // offset for sticky nav
+      for (const a of navLinks) {
+        const id = a.getAttribute('href');
+        const el = id && document.querySelector(id);
+        if (!el) continue;
+        const top = el.offsetTop, bottom = top + el.offsetHeight;
+        a.classList.toggle('active', y >= top && y < bottom);
+      }
+    };
+    document.addEventListener('scroll', setActive, { passive: true });
+    window.addEventListener('load', setActive);
+
+    // Smooth scroll for data-scroll buttons
+    document.body.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-scroll]');
+      if (!t) return;
+      const sel = t.getAttribute('data-scroll');
+      const el = sel && document.querySelector(sel);
+      if (el) {
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (menu.classList.contains('open')) { menu.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); }
+      }
+    });
+
+    // Date tag
+    const dateTag = document.getElementById('dateTag');
+    const fmt = new Intl.DateTimeFormat('bn-BD', { dateStyle: 'full' });
+    dateTag.textContent = fmt.format(new Date());
+
+    // Reveal sections on scroll
+    const revealEls = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); }
+      });
+    }, { threshold: .15 });
+    revealEls.forEach(el => io.observe(el));
+
+    // Back to top logic
+    const toTop = document.getElementById('toTop');
+    const onScrollTop = () => {
+      toTop.classList.toggle('visible', window.scrollY > 400);
+    };
+    document.addEventListener('scroll', onScrollTop, { passive: true });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // NOTES feature
+    const noteForm = document.getElementById('noteForm');
+    const noteList = document.getElementById('noteList');
+
+    function renderNotes() {
+      const notes = jget('notes', []);
+      noteList.innerHTML = '';
+      notes.forEach((n, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-bd">
+            <div class="mb-8" style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+              <strong>${n.title}</strong>
+              <span class="pill">${n.tag || 'note'}</span>
+            </div>
+            <p class="muted" style="white-space: pre-wrap;">${n.body}</p>
+            <div class="mt-16 right">
+              <button class="btn outline" data-edit="${i}">এডিট</button>
+              <button class="btn" data-del="${i}">ডিলিট</button>
+            </div>
+          </div>`;
+        noteList.appendChild(card);
+      });
+    }
+
+    noteForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('noteTitle').value.trim();
+      const tag = document.getElementById('noteTag').value.trim();
+      const body = document.getElementById('noteBody').value.trim();
+      if (!title || !body) return;
+      const notes = jget('notes', []);
+      notes.unshift({ title, tag, body, createdAt: Date.now() });
+      jset('notes', notes);
+      noteForm.reset();
+      renderNotes();
+    });
+
+    noteList.addEventListener('click', (e) => {
+      const del = e.target.closest('[data-del]');
+      const edit = e.target.closest('[data-edit]');
+      if (del) {
+        const i = Number(del.getAttribute('data-del'));
+        const notes = jget('notes', []);
+        notes.splice(i, 1);
+        jset('notes', notes);
+        renderNotes();
+      }
+      if (edit) {
+        const i = Number(edit.getAttribute('data-edit'));
+        const notes = jget('notes', []);
+        const n = notes[i];
+        const t = prompt('শিরোনাম এডিট করুন', n.title) ?? n.title;
+        const b = prompt('মেসেজ এডিট করুন', n.body) ?? n.body;
+        const g = prompt('ট্যাগ এডিট করুন', n.tag || '') ?? n.tag;
+        notes[i] = { ...n, title: t.trim() || n.title, body: b.trim() || n.body, tag: (g || '').trim() };
+        jset('notes', notes);
+        renderNotes();
+      }
+    });
+
+    renderNotes();
+
+    // TASKS feature
+    const taskForm = document.getElementById('taskForm');
+    const taskList = document.getElementById('taskList');
+
+    function renderTasks() {
+      const tasks = jget('tasks', []);
+      taskList.innerHTML = '';
+      tasks.forEach((t, i) => {
+        const li = document.createElement('li');
+        li.className = 'card';
+        li.innerHTML = `
+          <div class="card-bd" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <label style="display:flex; align-items:center; gap:10px;">
+              <input type="checkbox" ${t.done ? 'checked' : ''} data-toggle="${i}" />
+              <span style="text-decoration:${t.done ? 'line-through' : 'none'}">${t.text}</span>
+            </label>
+            <div>
+              <button class="btn outline" data-edit-task="${i}">এডিট</button>
+              <button class="btn" data-del-task="${i}">ডিলিট</button>
+            </div>
+          </div>`;
+        taskList.appendChild(li);
+      });
+    }
+
+    taskForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('taskInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const tasks = jget('tasks', []);
+      tasks.unshift({ text, done: false, createdAt: Date.now() });
+      jset('tasks', tasks);
+      input.value = '';
+      renderTasks();
+    });
+
+    taskList.addEventListener('click', (e) => {
+      const tgl = e.target.closest('[data-toggle]');
+      const del = e.target.closest('[data-del-task]');
+      const edt = e.target.closest('[data-edit-task]');
+      const tasks = jget('tasks', []);
+      if (tgl) {
+        const i = Number(tgl.getAttribute('data-toggle'));
+        tasks[i].done = !tasks[i].done;
+        jset('tasks', tasks);
+        renderTasks();
+      }
+      if (del) {
+        const i = Number(del.getAttribute('data-del-task'));
+        tasks.splice(i, 1);
+        jset('tasks', tasks);
+        renderTasks();
+      }
+      if (edt) {
+        const i = Number(edt.getAttribute('data-edit-task'));
+        const v = prompt('টাস্ক এডিট করুন', tasks[i].text) ?? tasks[i].text;
+        tasks[i].text = v.trim() || tasks[i].text;
+        jset('tasks', tasks);
+        renderTasks();
+      }
+    });
+
+    renderTasks();
+
+    // GALLERY modal
+    const modal = document.getElementById('imgModal');
+    const modalImg = document.getElementById('modalImg');
+    document.getElementById('galleryGrid').addEventListener('click', (e) => {
+      const img = e.target.closest('img');
+      if (!img) return;
+      modalImg.src = img.currentSrc || img.src;
+      if (typeof modal.showModal === 'function') modal.showModal();
+      else modal.setAttribute('open', '');
+    });
+
+    // Hash links offset fix (if user lands with #hash)
+    window.addEventListener('load', () => {
+      if (location.hash) {
+        const el = document.querySelector(location.hash);
+        el && setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+      }
+    });
+
+    // Prevent layout shift for dialog on iOS/Safari
+    if (CSS?.supports?.('backdrop-filter', 'blur(0px)')) {
+      document.documentElement.style.setProperty('--supports-backdrop', 1);
+    }
+  </script>
+</body>
+</html>
